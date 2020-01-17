@@ -53,17 +53,53 @@ const checkGameStatus = (board) => {
 
 	// check for vertical winner
 
-	// for (let r = 0; r < 6; r++) {
-	// 	for (let c = 0; c <= 4; c++) {
-	// 		let index = r * 7 + c;
-	// 		const slice = board.slice(index, index + 4);
-	// 		const winningResult = checkForWinningSlice(slice)
+	for (let r = 0; r <= 2; r++) {
+		for (let c = 0; c < 7; c++) {
+			let index = r * 7 + c;
+			const slice = [
+				board[index],
+				board[index + 7],
+				board[index + 7 * 2],
+				board[index + 7 * 3]
+			];
 
-	// 		if (winningResult !== false) return winningResult;
-	// 	}
-	// }
+			const winningResult = checkForWinningSlice(slice)
+
+			if (winningResult !== false) return winningResult;
+		}
+	}
 	// check for diagonal winner
 
+	for (let r = 0; r < 6; r++) {
+		for (let c = 0; c < 7; c++) {
+			let index = r * 7 + c;
+
+			if (c <= 3) {
+				const slice = [
+					board[index],
+					board[index + 7 + 1],
+					board[index + 7 * 2 + 2],
+					board[index + 7 * 3 + 3]
+				];
+				const winningResult = checkForWinningSlice(slice)
+
+				if (winningResult !== false) return winningResult;
+			}
+
+			if (c >= 3) {
+				const slice = [
+					board[index],
+					board[index + 7 - 1],
+					board[index + 7 * 2 - 2],
+					board[index + 7 * 3 - 3]
+				];
+
+				const winningResult = checkForWinningSlice(slice);
+
+				if (winningResult !== false) return winningResult;
+			}
+		}
+	}
 }
 
 const checkForWinningSlice = (smallBoard) => {
@@ -76,7 +112,6 @@ const checkForWinningSlice = (smallBoard) => {
 		smallBoard[1] === smallBoard[2] &&
 		smallBoard[2] === smallBoard[3]
 	) {
-		console.log(smallBoard[1])
 		return smallBoard[1];
 	}
 
@@ -110,6 +145,8 @@ class ConnectFourApp extends React.Component {
 
 		const gameState = checkGameStatus(newBoard);
 
+		console.log(gameState);
+
 		this.setState({
 			board: newBoard,
 			currentPlayer: toggleCurrentPlayer(currentPlayer),
@@ -139,9 +176,17 @@ class ConnectFourApp extends React.Component {
 	}
 
 	render() {
+		const {
+			gameState
+		} = this.state;
 		return (
 			<div className="App">
 				<header className="App-header">Connect 4</header>
+				{gameState ?
+					<div> <h2>Player {gameState} is the winner!</h2> </div>
+					:
+					<div></div>
+				}
 				<div className="board">
 					{this.renderCells()}
 				</div>
